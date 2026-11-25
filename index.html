@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#141415" />
+<meta name="description" content="Secure Government Services LLM. A local AI assistant for Jamaican Ministry Division Agencies, so citizens can get answers before they visit." />
+<title>GovServices JM | AI Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+:root {
+  /* Graphite ramp */
+  --bg-deep: #0f0f10;
+  --bg: #141415;
+  --card: #19191b;
+  --raised: #232325;
+  --line: rgba(237, 237, 237, 0.08);
+  --line-strong: rgba(237, 237, 237, 0.14);
+  --text: #ededed;
+  --text-2: #a1a1a6;
+  --text-3: #85858b;
+
+  /* Jamaican gold, the one accent */
+  --gold: #fed100;
+  --gold-ink: #1a1600;
+  --green: #4cc38a;
+
+  /* Agency dots, toned to sit in the ramp */
+  --taj: #e0b84a;
+  --mohw: #4cc38a;
+  --moey: #6d9eeb;
+  --mof: #c08a5a;
+
+  --r-sm: 6px;
+  --r-ctl: 10px;
+  --r-card: 16px;
+  --r-panel: 20px;
+  --max-w: 1200px;
+  --pad-x: 32px;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+body {
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 22px;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+.mono { font-family: 'IBM Plex Mono', ui-monospace, monospace; }
+.icon { width: 18px; height: 18px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.icon-16 { width: 16px; height: 16px; }
+a { color: inherit; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; border-radius: var(--r-sm); }
+
+.wrap { max-width: var(--max-w); margin: 0 auto; padding: 0 var(--pad-x); }
+
+/* Nav */
+nav {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(20, 20, 21, 0.92);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line);
+}
+.nav-inner { height: 64px; display: flex; align-items: center; gap: 32px; }
+.logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.logo-flag { width: 28px; height: 18px; border-radius: 3px; display: block; }
+.logo-img { height: 32px; width: auto; border-radius: var(--r-sm); display: block; }
+.wordmark { font-weight: 600; font-size: 17px; line-height: 1; letter-spacing: 0; }
+.wordmark span { color: var(--text-3); font-weight: 500; margin-left: 2px; }
+.nav-links { display: flex; gap: 28px; list-style: none; margin-left: 8px; }
+.nav-links a { font-size: 14px; color: var(--text-2); text-decoration: none; transition: color 150ms var(--ease); }
+.nav-links a:hover { color: var(--text); }
+.nav-end { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+.menu-btn { display: none; width: 36px; height: 36px; border-radius: var(--r-ctl); background: transparent; border: 1px solid var(--line); align-items: center; justify-content: center; cursor: pointer; color: var(--text-2); }
+.mobile-menu { display: none; border-top: 1px solid var(--line); padding: 8px var(--pad-x) 16px; }
+.mobile-menu a { display: block; padding: 8px 0; font-size: 15px; color: var(--text-2); text-decoration: none; }
+.mobile-menu.open { display: block; }
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  height: 36px; padding: 0 16px; border-radius: var(--r-ctl);
+  font-size: 14px; font-weight: 500; text-decoration: none; white-space: nowrap;
+  border: 1px solid transparent; cursor: pointer;
+  transition: background-color 150ms var(--ease), border-color 150ms var(--ease), color 150ms var(--ease), transform 120ms var(--ease);
+}
+.btn:active { transform: scale(0.98); }
+.btn-lg { height: 48px; padding: 0 20px; font-size: 15px; }
+.btn-primary { background: var(--gold); color: var(--gold-ink); box-shadow: inset 0 1px 0 rgba(255,255,255,0.25); }
+.btn-primary:hover { background: #ffdc33; }
+.btn-secondary { background: var(--raised); color: var(--text); border-color: var(--line); }
+.btn-secondary:hover { border-color: var(--line-strong); background: #2a2a2c; }
+
+/* Hero */
+.hero { padding: 80px 0 96px; }
+.hero-grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: 64px; align-items: center; }
+.eyebrow { font-size: 13px; color: var(--text-3); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+.hero h1 {
+  font-size: 56px; line-height: 1.05; font-weight: 500;
+  letter-spacing: -0.03em; margin-bottom: 24px; max-width: 17ch;
+}
+.hero h1 em { font-style: normal; color: var(--gold); }
+.hero-sub { font-size: 18px; line-height: 28px; color: var(--text-2); max-width: 36rem; margin-bottom: 32px; }
+.facts { display: grid; gap: 16px; margin-bottom: 40px; padding-left: 16px; border-left: 1px solid var(--line-strong); max-width: 36rem; }
+.fact dt { font-size: 13px; line-height: 20px; color: var(--text); font-weight: 500; }
+.fact dd { font-size: 14px; line-height: 22px; color: var(--text-2); }
+.hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+.hero-visual { display: flex; flex-direction: column; gap: 16px; }
+.preview {
+  border-radius: var(--r-panel); border: 1px solid var(--line);
+  background: var(--card); overflow: hidden;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.35);
+}
+.preview-bar { height: 52px; padding: 0 16px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--line); }
+.preview-title { font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.preview-body { padding: 20px; display: flex; flex-direction: column; gap: 12px; background: var(--bg); }
+.preview-body .msg { animation: none; max-width: 88%; }
+.preview-agencies { display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+.pa { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 10px; border-radius: 8px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--text-3); border: 1px solid var(--line); }
+.pa.on { background: var(--raised); color: var(--text); }
+.preview-link { display: flex; align-items: center; gap: 6px; margin-top: 8px; color: var(--gold); font-weight: 500; }
+.preview-saturday { margin-top: 8px; display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: var(--r-ctl); border: 1px dashed var(--line-strong); font-size: 13px; color: var(--text-3); }
+.preview-saturday .mono { color: var(--text-2); font-size: 12px; }
+.preview-open { margin-left: auto; color: var(--green); }
+.empty-questions { display: none; flex-direction: column; gap: 8px; margin-top: 16px; width: 100%; max-width: 360px; }
+.empty-questions .q-btn { border: 1px solid var(--line); background: var(--card); text-align: left; }
+.hero-caption { display: flex; gap: 24px; font-size: 13px; color: var(--text-3); }
+.hero-caption strong { color: var(--text); font-weight: 500; }
+
+/* Ticket chip, the signature detail */
+.ticket {
+  display: inline-flex; align-items: center; gap: 6px;
+  height: 24px; padding: 0 8px; border-radius: var(--r-sm);
+  border: 1px dashed var(--line-strong);
+  font-family: 'IBM Plex Mono', monospace; font-size: 12px; line-height: 1; color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+}
+.dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; background: var(--dot, var(--text-3)); }
+
+/* About strip */
+.about { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--bg-deep); }
+.about-grid { display: grid; grid-template-columns: repeat(3, 1fr); }
+.about-item { padding: 40px 32px; border-right: 1px solid var(--line); }
+.about-item:first-child { padding-left: 0; }
+.about-item:last-child { border-right: none; padding-right: 0; }
+.about-item .icon { color: var(--text-3); margin-bottom: 16px; }
+.about-item h3 { font-size: 15px; font-weight: 500; margin-bottom: 8px; }
+.about-item p { font-size: 14px; color: var(--text-2); max-width: 32ch; }
+
+/* Section heads */
+section.block { padding: 96px 0; }
+.section-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; margin-bottom: 40px; }
+.section-head h2 { font-size: 32px; line-height: 1.15; font-weight: 500; letter-spacing: -0.02em; }
+.section-head p { font-size: 15px; color: var(--text-2); max-width: 40ch; }
+.kicker { font-size: 13px; color: var(--text-3); margin-bottom: 8px; display: block; }
+
+/* Agencies */
+.agencies-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.agency-card {
+  display: flex; flex-direction: column; gap: 12px;
+  padding: 24px; border-radius: var(--r-card);
+  background: var(--card); border: 1px solid var(--line);
+  text-decoration: none; color: inherit; cursor: pointer;
+  transition: background-color 150ms var(--ease), border-color 150ms var(--ease);
+}
+.agency-card:hover { background: #1e1e20; border-color: var(--line-strong); }
+.agency-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.agency-icon { width: 40px; height: 40px; border-radius: var(--r-ctl); background: var(--raised); display: flex; align-items: center; justify-content: center; color: var(--text-2); }
+.agency-card h3 { font-size: 17px; font-weight: 500; line-height: 24px; }
+.agency-card p { font-size: 14px; color: var(--text-2); flex: 1; }
+.agency-cta { display: flex; align-items: center; gap: 4px; font-size: 14px; color: var(--text); font-weight: 500; margin-top: 8px; }
+.agency-cta .icon { color: var(--text-3); transition: transform 150ms var(--ease), color 150ms var(--ease); }
+.agency-card:hover .agency-cta .icon { transform: translateX(2px); color: var(--gold); }
+
+/* Assistant */
+.chat-shell {
+  display: grid; grid-template-columns: 264px 1fr;
+  height: 600px; border-radius: var(--r-panel);
+  background: var(--card); border: 1px solid var(--line); overflow: hidden;
+}
+.chat-sidebar { background: var(--bg-deep); border-right: 1px solid var(--line); padding: 16px 12px; display: flex; flex-direction: column; overflow: hidden; }
+.side-label { font-size: 12px; color: var(--text-3); padding: 0 8px; margin-bottom: 8px; }
+.side-label + * { margin-bottom: 24px; }
+.agency-list { display: flex; flex-direction: column; gap: 2px; }
+.mda-btn {
+  display: flex; align-items: center; gap: 10px; width: 100%;
+  height: 36px; padding: 0 8px; border-radius: 8px;
+  background: transparent; border: 1px solid transparent;
+  font-size: 14px; color: var(--text-2); text-align: left; cursor: pointer;
+  transition: background-color 150ms var(--ease), color 150ms var(--ease);
+}
+.mda-btn:hover { background: var(--card); color: var(--text); }
+.mda-btn.active { background: var(--raised); color: var(--text); border-color: var(--line); box-shadow: inset 0 1px 0 rgba(255,255,255,0.06); }
+.mda-btn .code { margin-left: auto; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--text-3); }
+.question-list { display: flex; flex-direction: column; gap: 4px; overflow-y: auto; margin-bottom: 0; }
+.q-btn {
+  text-align: left; padding: 8px; border-radius: 8px;
+  background: transparent; border: 1px solid transparent;
+  font-size: 13px; line-height: 20px; color: var(--text-2); cursor: pointer;
+  transition: background-color 150ms var(--ease), color 150ms var(--ease);
+}
+.q-btn:hover { background: var(--card); color: var(--text); }
+
+.chat-main { display: flex; flex-direction: column; min-width: 0; background: var(--bg); }
+.chat-header { height: 56px; padding: 0 20px; border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 12px; flex-shrink: 0; background: var(--card); }
+.chat-header .agency-icon { width: 32px; height: 32px; border-radius: 8px; }
+.chat-agency-name { font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chat-status { margin-left: auto; display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-3); white-space: nowrap; }
+.chat-status .dot { --dot: var(--green); width: 6px; height: 6px; }
+
+.mobile-agencies { display: none; gap: 8px; padding: 12px 16px; border-bottom: 1px solid var(--line); overflow-x: auto; background: var(--card); }
+.mobile-agencies .mda-btn { width: auto; flex-shrink: 0; height: 32px; padding: 0 12px; border-color: var(--line); }
+.mobile-agencies .mda-btn .code { display: none; }
+
+.chat-empty { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 32px 20px; text-align: center; }
+.chat-empty .agency-icon { width: 48px; height: 48px; border-radius: 12px; margin-bottom: 8px; }
+.chat-empty h3 { font-size: 17px; font-weight: 500; }
+.chat-empty p { font-size: 14px; color: var(--text-3); max-width: 32ch; }
+#chat-messages { flex: 1; overflow-y: auto; padding: 24px 20px; display: flex; flex-direction: column; gap: 12px; }
+.msg { max-width: 80%; padding: 10px 14px; border-radius: 14px; font-size: 14px; line-height: 22px; animation: msgIn 220ms var(--ease) both; }
+@keyframes msgIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.msg-user { align-self: flex-end; background: var(--raised); border: 1px solid var(--line); border-bottom-right-radius: 4px; }
+.msg-bot { align-self: flex-start; background: var(--card); border: 1px solid var(--line); border-bottom-left-radius: 4px; color: var(--text-2); }
+.msg-bot strong { color: var(--text); font-weight: 500; }
+.msg-bot .btn { margin-top: 12px; }
+.msg-typing { display: flex; gap: 4px; align-items: center; padding: 14px; }
+.typing-dot { width: 6px; height: 6px; background: var(--text-3); border-radius: 50%; animation: fade 1s var(--ease) infinite; }
+.typing-dot:nth-child(2) { animation-delay: 160ms; }
+.typing-dot:nth-child(3) { animation-delay: 320ms; }
+@keyframes fade { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+
+.chat-footer { padding: 16px 20px; border-top: 1px solid var(--line); background: var(--card); flex-shrink: 0; }
+.chat-input-row { display: flex; gap: 8px; }
+.chat-input {
+  flex: 1; min-width: 0; height: 44px; padding: 0 14px;
+  background: var(--raised); border: 1px solid var(--line); border-radius: var(--r-ctl);
+  font: inherit; font-size: 14px; color: var(--text); outline: none;
+  transition: border-color 150ms var(--ease);
+}
+.chat-input::placeholder { color: var(--text-3); }
+.chat-input:focus { border-color: rgba(254, 209, 0, 0.5); }
+.send-btn { width: 44px; height: 44px; border-radius: var(--r-ctl); background: var(--gold); color: var(--gold-ink); border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background-color 150ms var(--ease), transform 120ms var(--ease); }
+.send-btn:hover { background: #ffdc33; }
+.send-btn:active { transform: scale(0.97); }
+.chat-meta { margin-top: 8px; font-size: 12px; color: var(--text-3); text-align: center; }
+.chat-meta a { color: var(--text-2); text-decoration: underline; text-decoration-color: var(--line-strong); text-underline-offset: 3px; }
+.chat-meta a:hover { color: var(--text); }
+
+/* Footer */
+footer { border-top: 1px solid var(--line); background: var(--bg-deep); padding: 48px 0 40px; }
+.footer-inner { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; }
+.footer-left p { font-size: 14px; color: var(--text-2); max-width: 44ch; margin-top: 16px; }
+.motto { font-size: 14px; color: var(--gold); margin-top: 16px; }
+.footer-copy { font-size: 13px; color: var(--text-3); text-align: right; }
+
+.hidden { display: none !important; }
+
+/* Entrance */
+.rise { animation: rise 420ms var(--ease) both; }
+.rise-2 { animation-delay: 60ms; }
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .rise, .msg { animation: none; } }
+
+/* Responsive */
+@media (max-width: 1099px) {
+  .agencies-grid { grid-template-columns: repeat(2, 1fr); }
+  .hero h1 { font-size: 48px; }
+}
+@media (max-width: 899px) {
+  :root { --pad-x: 24px; }
+  .hero { padding: 48px 0 64px; }
+  .hero-grid { grid-template-columns: 1fr; gap: 48px; }
+  .about-grid { grid-template-columns: 1fr; }
+  .about-item, .about-item:first-child, .about-item:last-child { padding: 32px 0; border-right: none; border-bottom: 1px solid var(--line); }
+  .about-item:last-child { border-bottom: none; }
+  .chat-shell { grid-template-columns: 1fr; height: 560px; }
+  .chat-sidebar { display: none; }
+  .mobile-agencies { display: flex; }
+  .empty-questions { display: flex; }
+  .chat-empty { justify-content: flex-start; overflow-y: auto; }
+  section.block { padding: 64px 0; }
+  .section-head { flex-direction: column; align-items: flex-start; }
+}
+@media (max-width: 719px) {
+  .nav-links, .nav-end .btn { display: none; }
+  .menu-btn { display: inline-flex; }
+  .hero h1 { font-size: 40px; }
+  .hero-sub { font-size: 17px; line-height: 26px; }
+}
+@media (max-width: 599px) {
+  :root { --pad-x: 16px; }
+  .hero h1 { font-size: 36px; }
+  .agencies-grid { grid-template-columns: 1fr; }
+  .hero-actions .btn { width: 100%; justify-content: center; }
+  .footer-inner { flex-direction: column; align-items: flex-start; }
+  .footer-copy { text-align: left; }
+  .msg { max-width: 90%; }
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-landmark" viewBox="0 0 24 24"><line x1="3" x2="21" y1="22" y2="22"/><line x1="6" x2="6" y1="18" y2="11"/><line x1="10" x2="10" y1="18" y2="11"/><line x1="14" x2="14" y1="18" y2="11"/><line x1="18" x2="18" y1="18" y2="11"/><polygon points="12 2 20 7 4 7"/></symbol>
+  <symbol id="i-health" viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M3.22 12H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27"/></symbol>
+  <symbol id="i-education" viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></symbol>
+  <symbol id="i-finance" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="7" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-message" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></symbol>
+  <symbol id="i-server" viewBox="0 0 24 24"><rect width="20" height="8" x="2" y="2" rx="2"/><rect width="20" height="8" x="2" y="14" rx="2"/><line x1="6" x2="6.01" y1="6" y2="6"/><line x1="6" x2="6.01" y1="18" y2="18"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></symbol>
+  <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></symbol>
+  <symbol id="i-external" viewBox="0 0 24 24"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3"/></symbol>
+  <symbol id="i-flag" viewBox="0 0 38 24"><polygon points="0,0 19,12 0,24" fill="#009b3a"/><polygon points="38,0 19,12 38,24" fill="#009b3a"/><polygon points="0,0 38,0 19,12" fill="#111"/><polygon points="0,24 38,24 19,12" fill="#111"/><line x1="0" y1="0" x2="38" y2="24" stroke="#fed100" stroke-width="3.4"/><line x1="38" y1="0" x2="0" y2="24" stroke="#fed100" stroke-width="3.4"/></symbol>
+</svg>
+
+<!-- Nav -->
+<nav>
+  <div class="wrap nav-inner">
+    <a href="#top" class="logo" aria-label="GovServices JM home">
+      <img class="logo-img" src="https://imghosting.in/host/zh5b" alt=""
+        onerror="this.remove(); document.querySelectorAll('.logo-flag').forEach(f => f.style.display='block');" />
+      <svg class="logo-flag" style="display:none" viewBox="0 0 38 24" aria-hidden="true"><use href="#i-flag"/></svg>
+      <span class="wordmark">GovServices<span>JM</span></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#top">Home</a></li>
+      <li><a href="#agencies">Agencies</a></li>
+      <li><a href="#ai-assistant">AI assistant</a></li>
+      <li><a href="#about">About</a></li>
+    </ul>
+    <div class="nav-end">
+      <a class="btn btn-primary" href="https://couthie-statically-mariano.ngrok-free.dev" target="_blank" rel="noopener">Open portal</a>
+      <button class="menu-btn" aria-label="Menu" aria-expanded="false" aria-controls="mobile-menu" onclick="toggleMenu(this)">
+        <svg class="icon"><use href="#i-menu"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobile-menu">
+    <a href="#top" onclick="closeMenu()">Home</a>
+    <a href="#agencies" onclick="closeMenu()">Agencies</a>
+    <a href="#ai-assistant" onclick="closeMenu()">AI assistant</a>
+    <a href="#about" onclick="closeMenu()">About</a>
+    <a href="https://couthie-statically-mariano.ngrok-free.dev" target="_blank" rel="noopener">Open portal</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<header class="hero" id="top">
+  <div class="wrap hero-grid">
+    <div class="rise">
+      <p class="eyebrow">Secure Government Services LLM</p>
+      <h1>Government service answers for Jamaica, <em>even when the office is closed</em></h1>
+      <p class="hero-sub">A local AI assistant for four Ministry Division Agencies. Ask about licences, permits, grants and compliance from any device, before you book a visit.</p>
+      <dl class="facts">
+        <div class="fact">
+          <dt>What it is</dt>
+          <dd>An AI system for Ministry Division Agencies, running on bare-metal RHEL with a focus on data sovereignty and operational security.</dd>
+        </div>
+        <div class="fact">
+          <dt>Why it matters</dt>
+          <dd>Quick answers before appointments, and service details on weekends when MDAs are closed.</dd>
+        </div>
+      </dl>
+      <div class="hero-actions">
+        <a href="#ai-assistant" class="btn btn-primary btn-lg">
+          <svg class="icon"><use href="#i-message"/></svg>
+          Open assistant
+        </a>
+        <a href="#agencies" class="btn btn-secondary btn-lg">Browse agencies</a>
+      </div>
+    </div>
+
+    <div class="hero-visual rise rise-2">
+      <div class="preview" aria-hidden="true">
+        <div class="preview-bar">
+          <span class="ticket"><span class="dot" style="--dot:var(--taj)"></span>TAJ · 01</span>
+          <span class="preview-title">Tax Administration Jamaica</span>
+          <span class="chat-status"><span class="dot"></span>Local RAG</span>
+        </div>
+        <div class="preview-body">
+          <div class="preview-agencies">
+            <span class="pa on"><span class="dot" style="--dot:var(--taj)"></span>TAJ</span>
+            <span class="pa"><span class="dot" style="--dot:var(--mohw)"></span>MOHW</span>
+            <span class="pa"><span class="dot" style="--dot:var(--moey)"></span>MOEY</span>
+            <span class="pa"><span class="dot" style="--dot:var(--mof)"></span>MOF</span>
+          </div>
+          <div class="msg msg-user">How do I renew my driver's licence?</div>
+          <div class="msg msg-bot">Your question is ready for the <strong>Tax Administration Jamaica</strong> knowledge base<span class="preview-link">Continue in the portal <svg class="icon icon-16"><use href="#i-external"/></svg></span></div>
+          <div class="preview-saturday">
+            <span class="mono">SAT</span>
+            <span>MDA offices closed</span>
+            <span class="preview-open">Assistant available</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-caption">
+        <span><strong>4</strong> agencies connected</span>
+        <span>Local RAG on RHEL</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- About -->
+<section class="about" id="about">
+  <div class="wrap about-grid">
+    <div class="about-item">
+      <svg class="icon"><use href="#i-shield"/></svg>
+      <h3>Air-gapped RAG</h3>
+      <p>Answers are grounded in verified government documents, with no data sent to outside services.</p>
+    </div>
+    <div class="about-item">
+      <svg class="icon"><use href="#i-message"/></svg>
+      <h3>Plain English answers</h3>
+      <p>Ask about permits, licences, grants or compliance the way you would ask a clerk at the counter.</p>
+    </div>
+    <div class="about-item">
+      <svg class="icon"><use href="#i-server"/></svg>
+      <h3>Data sovereignty</h3>
+      <p>Built on bare-metal RHEL and hosted locally. All data stays within Jamaica's infrastructure.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Agencies -->
+<section class="block" id="agencies">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="kicker">Ministry Division Agencies</span>
+        <h2>Four agencies, one assistant</h2>
+      </div>
+      <p>Pick an agency to open the assistant with its template questions ready.</p>
+    </div>
+    <div class="agencies-grid" id="agency-cards"></div>
+  </div>
+</section>
+
+<!-- Assistant -->
+<section class="block" id="ai-assistant" style="padding-top:0">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="kicker">AI assistant</span>
+        <h2>Ask a question</h2>
+      </div>
+      <p>Choose an agency, pick a template question or type your own. The full session opens on the local GPT.</p>
+    </div>
+
+    <div class="chat-shell">
+      <aside class="chat-sidebar">
+        <div class="side-label">Agency</div>
+        <div class="agency-list" id="agency-list"></div>
+        <div class="side-label">Template questions</div>
+        <div class="question-list" id="question-list"></div>
+      </aside>
+
+      <div class="chat-main">
+        <div class="chat-header">
+          <div class="agency-icon"><svg class="icon icon-16" id="active-icon"><use href="#i-landmark"/></svg></div>
+          <div class="chat-agency-name" id="active-name">Tax Administration Jamaica</div>
+          <span class="ticket" id="active-ticket"><span class="dot" style="--dot:var(--taj)"></span>TAJ</span>
+          <div class="chat-status"><span class="dot"></span>Local RAG</div>
+        </div>
+        <div class="mobile-agencies" id="mobile-agencies"></div>
+
+        <div class="chat-empty" id="chat-empty">
+          <div class="agency-icon"><svg class="icon" id="empty-icon"><use href="#i-landmark"/></svg></div>
+          <h3>Pick a question or type your own</h3>
+          <p id="empty-sub">Template questions for Tax Administration Jamaica are on the left</p>
+          <div class="empty-questions" id="empty-questions"></div>
+        </div>
+        <div id="chat-messages" class="hidden" aria-live="polite"></div>
+
+        <div class="chat-footer">
+          <form class="chat-input-row" onsubmit="event.preventDefault(); sendMessage();">
+            <input type="text" id="chat-input" class="chat-input" placeholder="Ask about Tax Administration Jamaica" aria-label="Your question" autocomplete="off" />
+            <button class="send-btn" type="submit" aria-label="Send">
+              <svg class="icon"><use href="#i-send"/></svg>
+            </button>
+          </form>
+          <p class="chat-meta">Local RAG environment at <a href="https://couthie-statically-mariano.ngrok-free.dev" target="_blank" rel="noopener">couthie-statically-mariano.ngrok-free.dev</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="wrap footer-inner">
+    <div class="footer-left">
+      <a href="#top" class="logo">
+        <svg class="logo-flag" viewBox="0 0 38 24" aria-hidden="true"><use href="#i-flag"/></svg>
+        <span class="wordmark">GovServices<span>JM</span></span>
+      </a>
+      <p>Data sovereignty and operational security for the people of Jamaica. Built on bare-metal RHEL with air-gapped RAG infrastructure.</p>
+      <p class="motto">Out of Many, One People</p>
+    </div>
+    <div class="footer-copy">
+      <p>&copy; 2025 ITT401 Intelligent Systems Project</p>
+      <p style="margin-top:4px">University of the Commonwealth Caribbean</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+const PORTAL = 'https://couthie-statically-mariano.ngrok-free.dev';
+
+const mdaData = {
+  TAJ:  { name: 'Tax Administration Jamaica',    label: 'Tax Administration', icon: 'i-landmark',  dot: 'var(--taj)',
+          desc: "Driver's licences, TRN registration, tax compliance certificates and revenue services.",
+          questions: ["How do I renew my driver's licence?", "How do I recover a lost TRN?", "How do I check my tax compliance status?"] },
+  MOHW: { name: 'Ministry of Health & Wellness', label: 'Health & Wellness',  icon: 'i-health',    dot: 'var(--mohw)',
+          desc: 'Food handler permits, public health inspections, vaccination records and travel health requirements.',
+          questions: ['Where do I apply for a food handler permit?', 'What are current travel health requirements?', 'How do I book a public health inspection?'] },
+  MOEY: { name: 'Ministry of Education & Youth', label: 'Education & Youth',  icon: 'i-education', dot: 'var(--moey)',
+          desc: 'PATH programme eligibility, tertiary grants, vocational schools and youth development resources.',
+          questions: ['Am I eligible for the PATH programme?', 'How do I apply for a tertiary student grant?', 'Show me registered vocational schools'] },
+  MOF:  { name: 'Ministry of Finance',           label: 'Finance',            icon: 'i-finance',   dot: 'var(--mof)',
+          desc: 'Government procurement thresholds, supplier registration, budget compliance and fiscal reports.',
+          questions: ['What are the latest procurement thresholds?', 'How do I register as a government supplier?', 'View the annual budget compliance report'] }
+};
+const codes = Object.keys(mdaData);
+let currentAgency = 'TAJ';
+
+const svgUse = (id, cls = 'icon') => `<svg class="${cls}"><use href="#${id}"/></svg>`;
+
+// Agency cards
+document.getElementById('agency-cards').innerHTML = codes.map((c, i) => {
+  const d = mdaData[c];
+  return `<a href="#ai-assistant" class="agency-card" data-code="${c}">
+    <div class="agency-top">
+      <div class="agency-icon">${svgUse(d.icon)}</div>
+      <span class="ticket"><span class="dot" style="--dot:${d.dot}"></span>${c} · 0${i + 1}</span>
+    </div>
+    <h3>${d.label}</h3>
+    <p>${d.desc}</p>
+    <div class="agency-cta">Ask the assistant ${svgUse('i-chevron', 'icon icon-16')}</div>
+  </a>`;
+}).join('');
+document.querySelectorAll('.agency-card').forEach(a => a.addEventListener('click', () => selectAgency(a.dataset.code)));
+
+// Agency switchers, desktop sidebar and mobile row
+const btnHtml = c => `<button type="button" class="mda-btn" data-code="${c}"><span class="dot" style="--dot:${mdaData[c].dot}"></span>${mdaData[c].label}<span class="code">${c}</span></button>`;
+document.getElementById('agency-list').innerHTML = codes.map(btnHtml).join('');
+document.getElementById('mobile-agencies').innerHTML = codes.map(btnHtml).join('');
+document.querySelectorAll('.mda-btn').forEach(b => b.addEventListener('click', () => selectAgency(b.dataset.code)));
+
+function selectAgency(code) {
+  currentAgency = code;
+  const d = mdaData[code];
+  document.querySelectorAll('.mda-btn').forEach(b => {
+    const on = b.dataset.code === code;
+    b.classList.toggle('active', on);
+    b.setAttribute('aria-pressed', on);
+  });
+  document.getElementById('active-name').textContent = d.name;
+  document.querySelector('#active-icon use').setAttribute('href', '#' + d.icon);
+  document.querySelector('#empty-icon use').setAttribute('href', '#' + d.icon);
+  document.getElementById('active-ticket').innerHTML = `<span class="dot" style="--dot:${d.dot}"></span>${code}`;
+  document.getElementById('chat-input').placeholder = 'Ask about ' + d.name;
+  document.getElementById('empty-sub').textContent = window.matchMedia('(max-width: 899px)').matches
+    ? 'Template questions for ' + d.name
+    : 'Template questions for ' + d.name + ' are on the left';
+
+  ['question-list', 'empty-questions'].forEach(id => {
+    const list = document.getElementById(id);
+    list.innerHTML = '';
+    d.questions.forEach(q => {
+      const el = document.createElement('button');
+      el.type = 'button';
+      el.className = 'q-btn';
+      el.textContent = q;
+      el.addEventListener('click', () => { document.getElementById('chat-input').value = q; sendMessage(); });
+      list.appendChild(el);
+    });
+  });
+}
+
+function sendMessage() {
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text) return;
+  document.getElementById('chat-empty').classList.add('hidden');
+  const msgs = document.getElementById('chat-messages');
+  msgs.classList.remove('hidden');
+
+  const userMsg = document.createElement('div');
+  userMsg.className = 'msg msg-user';
+  userMsg.textContent = text;
+  msgs.appendChild(userMsg);
+  input.value = '';
+
+  const typing = document.createElement('div');
+  typing.className = 'msg msg-bot msg-typing';
+  typing.innerHTML = '<span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>';
+  msgs.appendChild(typing);
+  msgs.scrollTop = msgs.scrollHeight;
+
+  setTimeout(() => {
+    typing.remove();
+    const botMsg = document.createElement('div');
+    botMsg.className = 'msg msg-bot';
+    botMsg.innerHTML = `Your question is ready for the <strong>${mdaData[currentAgency].name}</strong> knowledge base. The full session runs on the local GPT.<br>
+      <a class="btn btn-secondary" href="${PORTAL}" target="_blank" rel="noopener">Continue in the portal ${svgUse('i-external', 'icon icon-16')}</a>`;
+    msgs.appendChild(botMsg);
+    msgs.scrollTop = msgs.scrollHeight;
+  }, 900);
+}
+
+function toggleMenu(btn) {
+  const m = document.getElementById('mobile-menu');
+  const open = m.classList.toggle('open');
+  btn.setAttribute('aria-expanded', open);
+}
+function closeMenu() {
+  document.getElementById('mobile-menu').classList.remove('open');
+  document.querySelector('.menu-btn').setAttribute('aria-expanded', 'false');
+}
+
+selectAgency('TAJ');
+</script>
+</body>
+</html>
